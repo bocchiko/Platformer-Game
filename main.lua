@@ -14,6 +14,7 @@ Character_Width = 16
 Character_Height = 20
 
 CameraSpeed = 40
+Character_Speed = 40
 
 Ground = 1
 Sky = 2
@@ -68,9 +69,9 @@ end
 
 function love.update(dt)
     if love.keyboard.isDown('left') then
-        cameraScroll = cameraScroll - CameraSpeed * dt
+        characterX = characterX - Character_Speed * dt
     elseif love.keyboard.isDown('right') then
-        cameraScroll = cameraScroll + CameraSpeed * dt
+        characterX = characterX + Character_Speed * dt
     end
 end
 
