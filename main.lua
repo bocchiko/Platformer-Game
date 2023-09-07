@@ -1,5 +1,6 @@
 push = require 'push'
-
+Class = require 'class'
+require 'Animation'
 require 'Util'
 
 Window_Height = 720
@@ -27,8 +28,21 @@ function love.load()
 
     characterSheet = love.graphics.newImage('character.png')
     characterQuads = GenerateQuads(characterSheet, Character_Width, Character_Height)
+    
+    idleAnimation = Animation {
+        frames = {1},
+        interval = 1
+    }
+    movingAnimation = Animation {
+        frames = {10, 11},
+        interval = 0.2
+    }
+    currentAnimation = idleAnimation
+
     characterX = Virtual_Width / 2 - (Character_Width / 2)
     characterY = ((7 - 1) * Tile_Size) - Character_Height
+
+    direction = 'right'
 
     mapWidth = 20
     mapHeight = 20
@@ -68,10 +82,17 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+    currentAnimation:update(dt)
     if love.keyboard.isDown('left') then
         characterX = characterX - Character_Speed * dt
+        currentAnimation = movingAnimation
+        direction = 'left'
     elseif love.keyboard.isDown('right') then
         characterX = characterX + Character_Speed * dt
+        currentAnimation = movingAnimation
+        direction = 'right'
+    else
+        currentAnimation = idleAnimation
     end
 
     cameraScroll = characterX - (Virtual_Width / 2 ) + (Character_Width / 2)
@@ -88,6 +109,11 @@ function love.draw()
             love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * Tile_Size, (y - 1) * Tile_Size)
         end
     end
-    love.graphics.draw(characterSheet, characterQuads[1], math.floor(characterX), math.floor(characterY))
+    
+    love.graphics.draw(characterSheet, characterQuads[currentAnimation:getCurrentFrame()],
+        math.floor(characterX) + Character_Width / 2, math.floor(characterY) + Character_Height / 2,
+        0, direction == 'left' and -1 or 1, 1,
+        Character_Width / 2, Character_Height / 2)
+
     push:finish()
 end
