@@ -16,6 +16,9 @@ Character_Height = 20
 
 CameraSpeed = 40
 Character_Speed = 40
+Jump_Velocity = -200
+
+Gravity = 7
 
 Ground = 1
 Sky = 2
@@ -37,10 +40,15 @@ function love.load()
         frames = {10, 11},
         interval = 0.2
     }
+    jumpAnimation = Animation {
+        frames = {3},
+        interval = 1
+    }
     currentAnimation = idleAnimation
 
     characterX = Virtual_Width / 2 - (Character_Width / 2)
     characterY = ((7 - 1) * Tile_Size) - Character_Height
+    characterDy = 0
 
     direction = 'right'
 
@@ -63,7 +71,7 @@ function love.load()
     end
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
-    love.window.setTitle('tiles0')
+    love.window.setTitle('Platformer')
     push:setupScreen(Virtual_Width, Virtual_Height, Window_Width, Window_Height, {
         fullscreen = false,
         resizable = true,
@@ -79,17 +87,34 @@ function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
     end
+
+    if key == 'space' and characterDy == 0 then
+        characterDy = Jump_Velocity
+        currentAnimation = jumpAnimation
+    end
 end
 
 function love.update(dt)
+    characterDy =  characterDy + Gravity
+    characterY = characterY + characterDy * dt
+    if characterY > ((7 - 1) * Tile_Size) - Character_Height then
+        characterY = ((7 - 1) * Tile_Size) - Character_Height
+        characterDy = 0
+    end
+
     currentAnimation:update(dt)
+    
     if love.keyboard.isDown('left') then
         characterX = characterX - Character_Speed * dt
-        currentAnimation = movingAnimation
+        if characterDy == 0 then
+            currentAnimation = movingAnimation
+        end
         direction = 'left'
     elseif love.keyboard.isDown('right') then
         characterX = characterX + Character_Speed * dt
-        currentAnimation = movingAnimation
+        if characterDy == 0 then
+            currentAnimation = movingAnimation
+        end
         direction = 'right'
     else
         currentAnimation = idleAnimation
