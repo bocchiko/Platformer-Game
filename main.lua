@@ -28,7 +28,7 @@ function love.load()
     characterSheet = love.graphics.newImage('character.png')
     characterQuads = GenerateQuads(characterSheet, Character_Width, Character_Height)
     characterX = Virtual_Width / 2 - (Character_Width / 2)
-    CharacterY = ((7 - 1) * Tile_Size) - Character_Height
+    characterY = ((7 - 1) * Tile_Size) - Character_Height
 
     mapWidth = 20
     mapHeight = 20
@@ -73,6 +73,8 @@ function love.update(dt)
     elseif love.keyboard.isDown('right') then
         characterX = characterX + Character_Speed * dt
     end
+
+    cameraScroll = characterX - (Virtual_Width / 2 ) + (Character_Width / 2)
 end
 
 function love.draw()
@@ -86,6 +88,6 @@ function love.draw()
             love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * Tile_Size, (y - 1) * Tile_Size)
         end
     end
-    love.graphics.draw(characterSheet, characterQuads[1], characterX, CharacterY)
+    love.graphics.draw(characterSheet, characterQuads[1], math.floor(characterX), math.floor(characterY))
     push:finish()
 end
