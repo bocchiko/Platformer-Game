@@ -177,6 +177,10 @@ function generateLevel()
     end
 
     for x = 1, mapWidth do
+        if math.random(7) == 1 then
+            goto continue
+        end
+
         local spawnPillar = math.random(5) == 1
         
         if spawnPillar then
@@ -194,6 +198,7 @@ function generateLevel()
                 topper = (not spawnPillar and ground == 7) and true or false 
             }
         end
+        ::continue::
     end
 
     return tiles
