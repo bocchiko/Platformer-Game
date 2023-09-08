@@ -68,7 +68,7 @@ function love.load()
 
     direction = 'right'
 
-    mapWidth = 20
+    mapWidth = 50
     mapHeight = 20
 
     cameraScroll = 0
@@ -164,14 +164,37 @@ end
 
 function generateLevel()
     local tiles = {}
+
     for y = 1, mapHeight do
         table.insert(tiles, {})
+
         for x = 1, mapWidth do
             table.insert(tiles[y], {
-                id = y < 7 and Sky or Ground,
-                topper = y == 7 and true or false
+                id = Sky,
+                topper = false
             })
         end
     end
+
+    for x = 1, mapWidth do
+        local spawnPillar = math.random(5) == 1
+        
+        if spawnPillar then
+            for pillar = 4, 6 do
+                tiles[pillar][x] = {
+                    id = Ground,
+                    topper = pillar == 4 and true or false
+                }
+            end
+        end
+
+        for ground = 7, mapHeight do
+            tiles[ground][x] = {
+                id = Ground,
+                topper = (not spawnPillar and ground == 7) and true or false 
+            }
+        end
+    end
+
     return tiles
 end
